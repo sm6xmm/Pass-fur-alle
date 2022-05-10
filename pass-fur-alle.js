@@ -22,6 +22,8 @@
     var dateTo = '2022-12-24';
     var autoConfirm = true;
 
+    var wantedLocations = ['Göteborg', 'Mölndal'];
+
     var datePickerElem = jQuery('#datepicker');
     if (!localStorage.getItem('TimeSearch')) {
         log('Set start date');
@@ -79,7 +81,7 @@
             } else {
                 log('Check for slot');
                 var availableTimeSlots = jQuery('.pointer.timecell.text-center[data-function="timeTableCell"][aria-label!="Bokad"]');
-                if (availableTimeSlots.length) {
+                if (availableTimeSlots.length && isWantedLocation(availableTimeSlots)) {
                     log('Time found');
                     availableTimeSlots.first().click();
                     var timeSelectionText;
@@ -125,6 +127,15 @@
         console.log(log);
     }
 
+    function isWantedLocation(location){
+        var locationName = location.parents('td').attr('headers');
+        if(wantedLocations.includes(locationName))
+            return true;
+
+        log('Found timeslot for '+locationName +' which is not wanted');
+        return false;
+    }
+
     function timeSearchTimeout() {
         log('Set timeout');
         var timeout = 1000;
@@ -159,14 +170,12 @@
             sounds: [
                 {name: "bell_ring"}
             ],
-        
             // main config
             path: "https://cdnjs.cloudflare.com/ajax/libs/ion-sound/3.0.7/sounds/",
             preload: true,
             multiplay: true,
             volume: 0.9
         });
-        
         // play sound
         ion.sound.play("bell_ring");
     }
